@@ -1,6 +1,17 @@
 # Replication-for-A-Neural-Algorithm-of-Artistic-Style
 A Tensorflow implementation for A Neural Algorithm of Artistic Style. 
 
+### Folder Structure
+./
+├── data
+│   ├── content/
+│   └── style/
+|
+├── img/all_output_figures and figures to be embedded in notebooks
+|
+├── report/
+|
+└── src/all_source.py files
 
 
 
