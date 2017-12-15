@@ -1,8 +1,9 @@
-import os
 import errno
+import hashlib
+import os
+
 from PIL import Image
 
-import hashlib
 
 def check_path(path):
     """
@@ -13,7 +14,8 @@ def check_path(path):
     if not os.path.exists(path):
         raise Exception(errno.ENOENT, "No such file", path)
 
-def check_md5(file,blocksize = 65536):
+
+def check_md5(file, blocksize=65536):
     """
     return the MD5 vaule of the local file
 
@@ -33,9 +35,10 @@ def check_md5(file,blocksize = 65536):
             buf = afile.read(blocksize)
     return hasher.hexdigest()
 
+
 def load_image(file_path, verbose=0):
     """
-    Read image from file, return a rgb image object of size (W,H,D)
+    Read image from file, return a rgb image object of size (W,H,C)
 
     :param file_path: path to image
 
@@ -55,7 +58,3 @@ def load_image(file_path, verbose=0):
         print('image {} loaded'.format(file_path))
         print(im.format, im.size, im.mode)
     return im
-
-
-
-

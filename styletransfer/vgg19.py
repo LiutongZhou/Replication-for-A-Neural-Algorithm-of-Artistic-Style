@@ -1,15 +1,37 @@
-from scipy.io import loadmat
-from six.moves.urllib.request import urlretrieve
-from styletransfer.io import check_md5
 import os
 
+import numpy as np
+import tensorflow as tf
+from scipy.io import loadmat
+from six.moves.urllib.request import urlretrieve
 
-class vgg19:
-    def __init__(self):
-        pass
+from styletransfer.io import check_md5
+from styletransfer.layers import conv2d, pooling_2x2
 
-    def load_weights(self,path):
+
+class VGG19:
+    """
+    All data use the tensorflow default NHWC form
+    
+    """
+
+    def __init__(self, weight_cache_path):
         """
+
+
+        :param weight_cache_path: filepath to pretrained vgg19 model
+
+        :type weight_cache_path: str
+        """
+        self.weight_cache_path = weight_cache_path
+        self._vgg_layer_weights = None
+        self.architecture = None
+        self.input_gate = None
+
+    def load_weights(self, path):
+        """
+        load pretrained vgg19 weights
+
         :param path: Full path to the pretrained vgg19 model
 
         :type path: str
@@ -19,90 +41,211 @@ class vgg19:
         :rtype: np.ndarray
         """
         MD5 = '106118b7cf60435e6d8e04f6a6dc3657'
-        URL = 'http://www.vlfeat.org/matconvnet/models/imagenet-vgg-verydeep-19.mat'
-        if not os.path.exists(path) or check_md5(path)!= MD5 :
-            print('Downloading pretrained model weights to',path)
-            urlretrieve(URL,path);
+        URL = 'http://www.vlfeat.org/matconvarchitecture/models/imagearchitecture-vgg-verydeep-19.mat'
+        if not os.path.exists(path) or check_md5(path) != MD5:
+            print('Downloading pretrained model weights to', path)
+            urlretrieve(URL, path);
 
         assert check_md5(path) == MD5
         vgg19_weights = loadmat(path)
-        return vgg19_weights['layers'][0]
+        self._vgg_layer_weights = vgg19_weights['layers'][0]
+        return self._vgg_layer_weights
 
+    def get_weights(self, i):
+        """
+        retrieve pretrained weights from vgg19.mat file
 
-    #todo
-    def build_model(input_img):
-        if args.verbose: print('\nBUILDING VGG-19 NETWORK')
-        net = {}
-        _, h, w, d = input_img.shape
+        :return: the retrived tensor
 
-        if args.verbose: print('loading model weights...')
-        vgg_rawnet = scipy.io.loadmat(args.model_weights)
-        vgg_layers = vgg_rawnet['layers'][0]
-        if args.verbose: print('constructing layers...')
+        :rtype: tf.tensor
+        """
+        weights = self._vgg_layer_weights[i][0][0][2][0][0]
+        W = tf.constant(weights)
+        return W
 
-        net['input'] = tf.Variable(np.zeros((1, h, w, d), dtype=np.float32))
+    def get_bias(self, i):
+        """
+        retrive pretrained biases from vgg19.mat file
+        """
+        bias = self._vgg_layer_weights[i][0][0][2][0][1]
+        b = tf.constant(np.ravel(bias))
+        return b
 
-        if args.verbose: print('LAYER GROUP 1')
-        net['conv1_1'] = conv_layer('conv1_1', net['input'], W=get_weights(vgg_layers, 0))
-        net['relu1_1'] = relu_layer('relu1_1', net['conv1_1'], b=get_bias(vgg_layers, 0))
+    def build(self, input_size, pooling_type='avg', verbose=0):
+        """
+        Build the vgg19 architecture
 
-        net['conv1_2'] = conv_layer('conv1_2', net['relu1_1'], W=get_weights(vgg_layers, 2))
-        net['relu1_2'] = relu_layer('relu1_2', net['conv1_2'], b=get_bias(vgg_layers, 2))
+        It is a sequential model of multiple ((conv + relu)+[pooling]) layers
 
-        net['pool1'] = pool_layer('pool1', net['relu1_2'])
+        :param input_size: Size of the input image. Follows (H,W,C) convention
 
-        if args.verbose: print('LAYER GROUP 2')
-        net['conv2_1'] = conv_layer('conv2_1', net['pool1'], W=get_weights(vgg_layers, 5))
-        net['relu2_1'] = relu_layer('relu2_1', net['conv2_1'], b=get_bias(vgg_layers, 5))
+        :type input_size: tuple
 
-        net['conv2_2'] = conv_layer('conv2_2', net['relu2_1'], W=get_weights(vgg_layers, 7))
-        net['relu2_2'] = relu_layer('relu2_2', net['conv2_2'], b=get_bias(vgg_layers, 7))
+        :param pooling_type: either 'avg' or 'max'
 
-        net['pool2'] = pool_layer('pool2', net['relu2_2'])
+        :param verbose: if 1, print detailed log
 
-        if args.verbose: print('LAYER GROUP 3')
-        net['conv3_1'] = conv_layer('conv3_1', net['pool2'], W=get_weights(vgg_layers, 10))
-        net['relu3_1'] = relu_layer('relu3_1', net['conv3_1'], b=get_bias(vgg_layers, 10))
+        :type verbose: int
 
-        net['conv3_2'] = conv_layer('conv3_2', net['relu3_1'], W=get_weights(vgg_layers, 12))
-        net['relu3_2'] = relu_layer('relu3_2', net['conv3_2'], b=get_bias(vgg_layers, 12))
+        :return: the whole architecture layers referenced by a dict
 
-        net['conv3_3'] = conv_layer('conv3_3', net['relu3_2'], W=get_weights(vgg_layers, 14))
-        net['relu3_3'] = relu_layer('relu3_3', net['conv3_3'], b=get_bias(vgg_layers, 14))
+        :rtype: dict
+        """
 
-        net['conv3_4'] = conv_layer('conv3_4', net['relu3_3'], W=get_weights(vgg_layers, 16))
-        net['relu3_4'] = relu_layer('relu3_4', net['conv3_4'], b=get_bias(vgg_layers, 16))
+        H, W, C = input_size
+        if verbose: print('BUILDING VGG-19 Architecture')
+        architecture = dict()
 
-        net['pool3'] = pool_layer('pool3', net['relu3_4'])
+        if verbose: print('loading model weights...')
+        _=self.load_weights(self.weight_cache_path)
 
-        if args.verbose: print('LAYER GROUP 4')
-        net['conv4_1'] = conv_layer('conv4_1', net['pool3'], W=get_weights(vgg_layers, 19))
-        net['relu4_1'] = relu_layer('relu4_1', net['conv4_1'], b=get_bias(vgg_layers, 19))
+        if verbose: print('constructing layers...')
+        with tf.name_scope('Input'):
+            architecture['input'] = tf.Variable(np.zeros((1, H, W, C)), dtype=tf.float32, name='vgg_input')
 
-        net['conv4_2'] = conv_layer('conv4_2', net['relu4_1'], W=get_weights(vgg_layers, 21))
-        net['relu4_2'] = relu_layer('relu4_2', net['conv4_2'], b=get_bias(vgg_layers, 21))
+        if verbose: print('Layer_Group_1')
+        with tf.name_scope('Layer_Group_1'):
+            with tf.name_scope('conv1_1'):
+                architecture['conv1_1'] = conv2d(architecture['input'],
+                                                 kernel=self.get_weights(0),
+                                                 bias=self.get_bias(0),
+                                                 layer_name='conv1_1',
+                                                 verbose=verbose)
 
-        net['conv4_3'] = conv_layer('conv4_3', net['relu4_2'], W=get_weights(vgg_layers, 23))
-        net['relu4_3'] = relu_layer('relu4_3', net['conv4_3'], b=get_bias(vgg_layers, 23))
+            with tf.name_scope('conv1_2'):
+                architecture['conv1_2'] = conv2d(architecture['conv1_1'],
+                                                 kernel=self.get_weights(2),
+                                                 bias=self.get_bias(2),
+                                                 layer_name='conv1_2',
+                                                 verbose=verbose)
 
-        net['conv4_4'] = conv_layer('conv4_4', net['relu4_3'], W=get_weights(vgg_layers, 25))
-        net['relu4_4'] = relu_layer('relu4_4', net['conv4_4'], b=get_bias(vgg_layers, 25))
+            with tf.name_scope('pooling1'):
+                architecture['pool1'] = pooling_2x2(architecture['conv_1_2'],
+                                                    layer_name='pool1',
+                                                    pooling_type=pooling_type,
+                                                    verbose=verbose)
 
-        net['pool4'] = pool_layer('pool4', net['relu4_4'])
+        if verbose: print('Layer_Group_2')
+        with tf.name_scope('Layer_Group_2'):
+            with tf.name_scope('conv2_1'):
+                architecture['conv2_1'] = conv2d(architecture['pool1'],
+                                                 kernel=self.get_weights(5),
+                                                 bias=self.get_bias(5),
+                                                 layer_name='conv2_1',
+                                                 verbose=verbose)
 
-        if args.verbose: print('LAYER GROUP 5')
-        net['conv5_1'] = conv_layer('conv5_1', net['pool4'], W=get_weights(vgg_layers, 28))
-        net['relu5_1'] = relu_layer('relu5_1', net['conv5_1'], b=get_bias(vgg_layers, 28))
+            with tf.name_scope('conv2_2'):
+                architecture['conv2_2'] = conv2d(architecture['conv2_1'],
+                                                 kernel=self.get_weights(7),
+                                                 bias=self.get_bias(7),
+                                                 layer_name='conv2_2',
+                                                 verbose=verbose)
+            with tf.name_scope('pooling2'):
+                architecture['pool2'] = pooling_2x2(architecture['conv2_2'],
+                                                    layer_name='pool2',
+                                                    pooling_type=pooling_type,
+                                                    verbose=verbose)
 
-        net['conv5_2'] = conv_layer('conv5_2', net['relu5_1'], W=get_weights(vgg_layers, 30))
-        net['relu5_2'] = relu_layer('relu5_2', net['conv5_2'], b=get_bias(vgg_layers, 30))
+        if verbose: print('Layer_Group_3')
+        with tf.name_scope('Layer_Group_3'):
+            with tf.name_scope('conv3_1'):
+                architecture['conv3_1'] = conv2d(architecture['pool2'],
+                                                 kernel=self.get_weights(10),
+                                                 bias=self.get_bias(10),
+                                                 layer_name='conv3_1',
+                                                 verbose=verbose)
 
-        net['conv5_3'] = conv_layer('conv5_3', net['relu5_2'], W=get_weights(vgg_layers, 32))
-        net['relu5_3'] = relu_layer('relu5_3', net['conv5_3'], b=get_bias(vgg_layers, 32))
+            with tf.name_scope('conv3_2'):
+                architecture['conv3_2'] = conv2d(architecture['conv3_1'],
+                                                 kernel=self.get_weights(12),
+                                                 bias=self.get_bias(12),
+                                                 layer_name='conv3_2',
+                                                 verbose=verbose)
 
-        net['conv5_4'] = conv_layer('conv5_4', net['relu5_3'], W=get_weights(vgg_layers, 34))
-        net['relu5_4'] = relu_layer('relu5_4', net['conv5_4'], b=get_bias(vgg_layers, 34))
+            with tf.name_scope('conv3_3'):
+                architecture['conv3_3'] = conv2d(architecture['conv3_2'],
+                                                 kernel=self.get_weights(14),
+                                                 bias=self.get_bias(14),
+                                                 layer_name='conv3_3',
+                                                 verbose=verbose)
 
-        net['pool5'] = pool_layer('pool5', net['relu5_4'])
+            with tf.name_scope('conv3_4'):
+                architecture['conv3_4'] = conv2d(architecture['conv3_3'],
+                                                 kernel=self.get_weights(16),
+                                                 bias=self.get_bias(16),
+                                                 layer_name='conv3_4',
+                                                 verbose=verbose)
 
-        return net
+            with tf.name_scope('pooling3'):
+                architecture['pool3'] = pooling_2x2(architecture['conv3_4'],
+                                                    layer_name='pool3',
+                                                    pooling_type=pooling_type,
+                                                    verbose=verbose)
+
+        if verbose: print('Layer_Group_4')
+        with tf.name_scope('Layer_Group_4'):
+            with tf.name_scope('conv4_1'):
+                architecture['conv4_1'] = conv2d(architecture['pool3'],
+                                                 kernel=self.get_weights(19),
+                                                 bias=self.get_bias(19),
+                                                 layer_name='conv4_1',
+                                                 verbose=verbose)
+
+            with tf.name_scope('conv4_2'):
+                architecture['conv4_2'] = conv2d(architecture['conv4_1'],
+                                                 kernel=self.get_weights(21),
+                                                 bias=self.get_bias(21),
+                                                 layer_name='conv4_2',
+                                                 verbose=verbose)
+            with tf.name_scope('conv4_3'):
+                architecture['conv4_3'] = conv2d(architecture['conv4_2'],
+                                                 kernel=self.get_weights(23),
+                                                 bias=self.get_bias(23),
+                                                 layer_name='conv4_3',
+                                                 verbose=verbose)
+            with tf.name_scope('conv4_4'):
+                architecture['conv4_4'] = conv2d(architecture['conv4_3'],
+                                                 kernel=self.get_weights(25),
+                                                 bias=self.get_bias(25),
+                                                 layer_name='conv4_4',
+                                                 verbose=verbose)
+            with tf.name_scope('pooling4'):
+                architecture['pool4'] = pooling_2x2(architecture['conv4_4'],
+                                                    layer_name='pool4',
+                                                    pooling_type=pooling_type,
+                                                    verbose=verbose)
+
+        if verbose: print('Layer_Group_5')
+        with tf.name_scope('Layer_Group_5'):
+            with tf.name_scope('conv5_1'):
+                architecture['conv5_1'] = conv2d(architecture['pool4'],
+                                                 kernel=self.get_weights(28),
+                                                 bias=self.get_bias(28),
+                                                 layer_name='conv5_1',
+                                                 verbose=verbose)
+            with tf.name_scope('conv5_2'):
+                architecture['conv5_2'] = conv2d(architecture['conv5_1'],
+                                                 kernel=self.get_weights(30),
+                                                 bias=self.get_bias(30),
+                                                 layer_name='conv5_2',
+                                                 verbose=verbose)
+            with tf.name_scope('conv5_3'):
+                architecture['conv5_3'] = conv2d(architecture['conv5_2'],
+                                                 kernel=self.get_weights(32),
+                                                 bias=self.get_bias(32),
+                                                 layer_name='conv5_3',
+                                                 verbose=verbose)
+            with tf.name_scope('conv5_4'):
+                architecture['conv5_4'] = conv2d(architecture['conv5_3'],
+                                                 kernel=self.get_weights(34),
+                                                 bias=self.get_bias(34),
+                                                 layer_name='conv5_4',
+                                                 verbose=verbose)
+            with tf.name_scope('pooling5'):
+                architecture['pool5'] = pooling_2x2(architecture['conv5_4'],
+                                                    layer_name='pool5',
+                                                    pooling_type=pooling_type,
+                                                    verbose=verbose)
+
+        self.architecture = architecture
+        self.input_gate = architecture['input']

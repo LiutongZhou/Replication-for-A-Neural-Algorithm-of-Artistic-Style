@@ -1,12 +1,10 @@
-import argparse
-
 import os
 import time
 
 import numpy as np
-import scipy.io
 import tensorflow as tf
-from styletransfer.io import  check_path, load_image
+from .io import  check_path, load_image
+from .vgg19 import VGG19
 
 
 
@@ -63,9 +61,13 @@ class artist:
         self.init_type = init_type
         self.noise_ratio = noise_ratio
         self.content_image = None
+        self.content_image_shape =None
         self.style_images = None
-        self.pretrained_vgg19_path = kwargs.get('pretrained_vgg19_path',
-                                                './data/imagenet-vgg-verydeep-19')
+
+
+        self.pretrained_vgg19_path = './data/imagenet-vgg-verydeep-19.mat'
+        if kwargs is not None and 'pretrained_vgg19_path' in kwargs:
+            self.pretrained_vgg19_path = kwargs['pretrained_vgg19_path']
 
 
 
@@ -78,7 +80,7 @@ class artist:
 
         :type content_img: str
 
-        :return: the loaded content data after preprocessing, shape = (1, H, W, D)
+        :return: the loaded content data after preprocessing, shape = (1, H, W, C)
 
         :rtype: np.ndarray
         """
@@ -86,7 +88,7 @@ class artist:
         check_path(path)
         img = load_image(path)  # RGB pillow image object
 
-        h, w = img.size
+        w, h = img.size
         mx = self.max_size
 
         # resize if > max size
@@ -191,6 +193,8 @@ class artist:
         """
         Transform the image object to numpy array, and subtract a magic number for centering purpose.
 
+        # note: the magic number is actually the normalization coefficient used by vgg19
+
         :param img: RGB image object of shape (W,H)
 
         :type img: PIL.Image.Image
@@ -207,7 +211,7 @@ class artist:
         img_array -= np.array([123.68, 116.779, 103.939]).reshape((1, 1, 1, 3))  # subtract the magic number
         return img_array
 
-    def fit(self,content,style = None):
+    def fit(self,content,style =None,pooling_type='avg',verbose=0):
         """
         learn to combine content and style
 
@@ -218,6 +222,10 @@ class artist:
         :param style: style image name or a list of style image names. Automatically use all styles if not set
 
         :type style: str  or a list of strs
+
+        :param pooling_type: either 'avg' or 'max'
+
+        :param verbose: 0 or 1, if 1, print more details
 
         """
 
@@ -233,7 +241,11 @@ class artist:
             tick = time.time()
 
             init_target_data = self._init_target_image()
-            optimize(content_data, style_data, init_target_data)
+
+            vgg19= VGG19(self.pretrained_vgg19_path)
+            vgg19.build(input_size=self.content_image_shape,pooling_type=pooling_type,verbose=verbose)
+
+            optimize(content_data, style_data, init_target_data)# todo
 
             tock = time.time()
             print('Fitting done. Wall time: {}'.format(tock - tick))
