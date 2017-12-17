@@ -4,9 +4,11 @@ import numpy as np
 import tensorflow as tf
 from scipy.io import loadmat
 from six.moves.urllib.request import urlretrieve
+from PIL import Image
+import PIL
 
-from styletransfer.io import check_md5
-from styletransfer.layers import conv2d, pooling_2x2
+from .io import check_md5
+from .layers import conv2d, pooling_2x2
 
 
 class VGG19:
@@ -17,7 +19,6 @@ class VGG19:
 
     def __init__(self, weight_cache_path):
         """
-
 
         :param weight_cache_path: filepath to pretrained vgg19 model
 
@@ -101,6 +102,7 @@ class VGG19:
 
         if verbose: print('constructing layers...')
         with tf.name_scope('Input'):
+            # input is set to be a variable so it can be optimized over
             architecture['input'] = tf.Variable(np.zeros((1, H, W, C)), dtype=tf.float32, name='vgg_input')
 
         if verbose: print('Layer_Group_1')
@@ -120,7 +122,7 @@ class VGG19:
                                                  verbose=verbose)
 
             with tf.name_scope('pooling1'):
-                architecture['pool1'] = pooling_2x2(architecture['conv_1_2'],
+                architecture['pool1'] = pooling_2x2(architecture['conv1_2'],
                                                     layer_name='pool1',
                                                     pooling_type=pooling_type,
                                                     verbose=verbose)
@@ -249,3 +251,71 @@ class VGG19:
 
         self.architecture = architecture
         self.input_gate = architecture['input']
+
+    def get_layer_output(self,input_data,ouput_layer):
+        """
+        feed the input data and retrieve the ouput tensor of output layer in the computational graph
+
+        :param input_data: data to be feeded into the input gate
+
+        :type input_data: np.ndarray
+
+        :param ouput_layer: node name of the output layer
+
+        :type ouput_layer: str
+
+        :return: the output value of output_layer
+
+        :rtype: np.ndarray
+
+        """
+
+        with tf.Session() as sess:
+            sess.run(self.architecture['input'].assign(input_data))
+            return sess.run(self.architecture[ouput_layer])
+
+
+    @classmethod
+    def preprocess(self, img):
+        """
+        Transform the image object to numpy array, and subtract a magic number for centering purpose.
+
+        # note: the magic number is actually the normalization coefficient used by vgg19
+
+        :param img: RGB image object of shape (W,H)
+
+        :type img: PIL.Image.Image
+
+        :return: RGB image array of shape (1,H,W,D) after subtracting the magic number
+
+        :rtype: np.ndarray
+        """
+        img_array = np.array(img, dtype=np.float32)  # img_array.shape = (H,W,D)
+
+        # shape (h, w, d) to (1, h, w, d)
+        assert img_array.ndim == 3, "image data should have three channels"
+        img_array = np.expand_dims(img_array, axis=0)
+        img_array -= np.array([123.68, 116.779, 103.939]).reshape((1, 1, 1, 3))  # subtract the magic number
+        return img_array
+
+
+    @classmethod
+    def postprocess(self, img_data):
+        """
+        Reverse transformation of preprocessing
+
+        :param img_data: RGB np.ndarray of shape (1,H,W,D) after subtracting the magic number
+
+        :type img_data: np.ndarray
+
+        :return: a Pillow image object of size (W,H)
+
+        :rtype: PIL.Image.Image
+        """
+        img_data += np.array([123.68, 116.779, 103.939]).reshape((1, 1, 1, 3))
+        # shape (1, h, w, d) to (h, w, d)
+        img_data = img_data[0]
+        img_data = np.clip(img_data, 0, 255).astype('uint8')
+        assert img_data.ndim == 3, "image data should have three channels"
+        im = Image.fromarray(img_data, "RGB")
+        return im

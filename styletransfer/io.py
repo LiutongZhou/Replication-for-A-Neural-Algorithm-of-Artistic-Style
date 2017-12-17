@@ -58,3 +58,29 @@ def load_image(file_path, verbose=0):
         print('image {} loaded'.format(file_path))
         print(im.format, im.size, im.mode)
     return im
+
+
+def save_image(im, filepath):
+    """
+    Write image to filepath
+
+    :param im: rgb image
+
+    :type im: PIL.Image.Image
+
+    :param filepath: file path to write
+
+    :type filepath: str
+
+    :return: img
+
+    :rtype: Pillow image object
+
+    """
+    im.save(filepath)
+    print('image file saved to ', filepath)
+
+
+def maybe_make_directory(dir_path):
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
