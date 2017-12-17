@@ -7,6 +7,7 @@ import tensorflow as tf
 from .io import check_path, load_image, save_image, maybe_make_directory
 from .optimizer import Adam, LBFGS
 from .vgg19 import VGG19
+from PIL.Image import HAMMING
 
 
 def _content_layer_loss(content_feature, target_image_feature, content_loss_function):
@@ -252,13 +253,13 @@ class Artist:
             new_h = mx
             new_w = new_h / h * w
             new_size = (int(new_w), int(new_h))
-            img = img.resize(new_size)
+            img = img.resize(new_size,HAMMING)
 
         if w > mx:  # if w>h and w>mx
             new_w = mx
             new_h = new_w / w * h
             new_size = (int(new_w), int(new_h))
-            img = img.resize(new_size)
+            img = img.resize(new_size,HAMMING)
 
         self.content_img = img
 
@@ -328,7 +329,7 @@ class Artist:
 
         :rtype: np.ndarray
         """
-        noise_img = np.random.uniform(-20., 20., img_data.shape).astype(np.float32)
+        noise_img = np.random.uniform(-10., 10., img_data.shape).astype(np.float32)
         img_data = noise_ratio * noise_img + (1. - noise_ratio) * img_data
         return img_data
 
