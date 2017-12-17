@@ -4,7 +4,7 @@ import time
 import numpy as np
 import tensorflow as tf
 
-from .io import check_path, load_image
+from .io import check_path, load_image, save_image, maybe_make_directory
 from .optimizer import Adam, LBFGS
 from .vgg19 import VGG19
 
@@ -119,6 +119,7 @@ class Artist:
     def __init__(self,
                  content_dir='./data/content/',
                  style_dir='./data/style/',
+                 output_dir = './data/output',
                  init_type='content',
                  noise_ratio=1.,
                  max_szie=512,
@@ -135,6 +136,10 @@ class Artist:
         :param style_dir: path to directory containing style images
 
         :type style_dir: str
+
+        :param output_dir: path to output directory
+
+        :type output_dir: str
 
         :param init_type: The inital target image. either 'content', 'tyle', or 'random'.
 
@@ -182,6 +187,7 @@ class Artist:
         self.content_weight = content_weight
         self.style_weight = style_weight
         self.style_dir = style_dir
+        self.output_dir = output_dir
         self.init_type = init_type
         self.noise_ratio = noise_ratio
         self.content_image = None  # Only available after calling get_content
@@ -449,13 +455,17 @@ class Artist:
 
             # Train
             optimizer.train(total_loss, max_step=max_iter, verbose=verbose)
-            self.generated_image_data = sess.run(vgg19.architecture['input'])
+            self._generated_image_data = sess.run(vgg19.architecture['input'])
             summary_writer.close()
 
             tock = time.time()
             print('Fitting done. Wall time: {}'.format(tock - tick))
+            self.generated_image = VGG19.postprocess(self._generated_image_data)
+            return  self.generated_image
 
-    def draw(self):
-        generated_image = VGG19.postprocess(self.generated_image_data)
-        generated_image.show()
-        return generated_image
+    def draw(self,name):
+        maybe_make_directory(self.output_dir)
+        self.generated_image.show()
+        output_filepath =os.path.join(self.output_dir,name+'.png')
+        save_image(self.generated_image,output_filepath)
+        return self.generated_image

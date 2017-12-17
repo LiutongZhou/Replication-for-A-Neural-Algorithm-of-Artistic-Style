@@ -62,7 +62,7 @@ def load_image(file_path, verbose=0):
 
 def save_image(im, filepath):
     """
-    Write image to filepath
+    Write image to filepath on disk
 
     :param im: rgb image
 
@@ -77,6 +77,7 @@ def save_image(im, filepath):
     :rtype: Pillow image object
 
     """
+
     im.save(filepath)
     print('image file saved to ', filepath)
 
