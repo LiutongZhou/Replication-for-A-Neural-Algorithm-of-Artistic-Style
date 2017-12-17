@@ -42,7 +42,8 @@ class VGG19:
         :rtype: np.ndarray
         """
         MD5 = '106118b7cf60435e6d8e04f6a6dc3657'
-        URL = 'http://www.vlfeat.org/matconvarchitecture/models/imagearchitecture-vgg-verydeep-19.mat'
+        URL = 'http://www.vlfeat.org/matconvnet/models/imagenet-vgg-verydeep-19.mat'
+
         if not os.path.exists(path) or check_md5(path) != MD5:
             print('Downloading pretrained model weights to', path)
             urlretrieve(URL, path);
