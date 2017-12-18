@@ -36,4 +36,4 @@ conda env create -f environment.yml
 ```
 
 ### About
-The styletransfer package is a handy implementation of the Neural Style Transfer Algorithm. It is well stuctured and documented. To get an overview of how to use the package, see Demo.ipynb
+The styletransfer package is a handy implementation of the Neural Style Transfer Algorithm. It is well stuctured and documented. To get an overview of how to use the package, see [Demo.ipynb](./Demo.ipynb)
