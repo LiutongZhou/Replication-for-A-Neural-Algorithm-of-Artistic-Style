@@ -1,20 +1,39 @@
-# Replication-for-A-Neural-Algorithm-of-Artistic-Style
-A Tensorflow implementation for A Neural Algorithm of Artistic Style. 
+# Styletransfer
+A Tensorflow implementation for A Neural Algorithm of Artistic Style (Gatys et al. 2015)
 
 ### Folder Structure
+```bash
 ./
+.
 ├── data
-│   ├── content/
-│   └── style/
-|
-├── img/all_output_figures and figures to be embedded in notebooks
-|
-├── report/
-|
-└── src/all_source.py files
+│   ├── content/ # your content photgraphs
+│   └── style/ # your images of artworks
+├── Demo.ipynb
+├── README.md
+├── report
+├── styletransfer
+│   ├── artist.py
+│   ├── __init__.py
+│   ├── io.py
+│   ├── layers.py
+│   ├── optimizer.py
+│   └── vgg19.py
+```
 
+### Requirements
+* Ubuntu 16.04
+* Tensorflow-gpu 1.3.0 +
+* Scipy 
+* Numpy
+* Pillow
+* Jupyter
+* Matplotlib
 
+To quickly build the same environment as the author's, use the provided environment.yml file
+```bash
+conda env create -f environment.yml
 
-### Referecne
-1. [Important resources if you are working with Neural Style Transfer or Deep Photo Style Transfer](https://towardsdatascience.com/important-resources-if-you-are-working-with-neural-style-transfer-or-deep-photo-style-transfer-719593b3dbf1)
-2. https://github.com/ckmarkoh/neuralart_tensorflow/blob/master/main.py
+```
+
+### About
+The styletransfer package is a handy implementation of the Neural Style Transfer Algorithm. It is well stuctured and documented. To get an overview of how to use the package, see Demo.ipynb
