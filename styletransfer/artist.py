@@ -197,7 +197,7 @@ class Artist:
 
         self.content_layers = kwargs.get('content_layers', ['conv4_2'])
         self.style_layers = kwargs.get('style_layers', ['conv1_1', 'conv2_1', 'conv3_1', 'conv4_1', 'conv5_1'])
-        self.content_layer_weights = kwargs.get('content_layer_weights', [1.0])
+        self.content_layer_weights = kwargs.get('content_layer_weights', [1/len(self.content_layers)]*len(self.content_layers))
 
         self.style_layer_weights = kwargs.get('style_layer_weights',
                                               [1 / len(self.style_layers)] * len(self.style_layers))
@@ -289,6 +289,8 @@ class Artist:
                       if os.path.isfile(os.path.join(self.style_dir, f))]
         elif isinstance(style_imgs, str):
             styles = [style_imgs]
+        else:
+            styles = style_imgs
 
         self.styles = styles
 
