@@ -18,9 +18,9 @@ title                    : "Style Transfer"
 title_separator          : "-"
 name                     : "Liutong Zhou"
 description              : "A Tensorflow implementation for A Neural Algorithm of Artistic Style"
-url                      : "https://liutongzhou.github.io/Replication-for-A-Neural-Algorithm-of-Artistic-Style/" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
-baseurl                  : # the subpath of your site, e.g. "/blog"
-repository               : # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
+url                      : "https://liutongzhou.github.io" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
+baseurl                  : "/Replication-for-A-Neural-Algorithm-of-Artistic-Style" # the subpath of your site, e.g. "/blog"
+repository               : "LiutongZhou/Replication-for-A-Neural-Algorithm-of-Artistic-Style" # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
 # breadcrumbs            : false # true, false (default)
 words_per_minute         : 200
@@ -88,7 +88,7 @@ analytics:
 
 # Site Author
 author:
-  name             : "Your Name"
+  name             : "Liutong Zhou"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "I am an amazing person."
   location         : "Somewhere"
@@ -187,7 +187,7 @@ sass:
 permalink: /:categories/:title/
 paginate: 5 # amount of posts to show
 paginate_path: /page:num/
-timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+timezone: America/New_York # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 
 # Plugins (previously gems:)
