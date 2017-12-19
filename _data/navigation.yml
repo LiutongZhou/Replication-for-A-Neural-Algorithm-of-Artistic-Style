@@ -1,6 +1,6 @@
 # main links
 main:
   - title: "About StyleTransfer"
-      url: "/"
+    url: /
   - title: "Demonstration"
-      url: "/Demo/"
+    url: /Demo/
