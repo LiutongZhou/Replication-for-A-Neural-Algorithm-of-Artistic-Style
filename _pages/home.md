@@ -7,8 +7,8 @@ header:
   overlay_image: /assets/images/fu_chun_shan_ju_tu.jpg
   cta_label: "<i class='fa fa-download'></i> Install Now"
   cta_url: "/docs/quick-start-guide/"
-  caption:
-excerpt: 'A Tensorflow implementation for A Neural Algorithm of Artistic Style (Gatys et al. 2015).<br />  {::nomarkdown}
+  caption: caption
+excerpt: 'A Tensorflow implementation for A Neural Algorithm of Artistic Style (Gatys et al. 2015).<br />'
 
 feature_row:
   - image_path: /assets/images/mm-customizable-feature.png
