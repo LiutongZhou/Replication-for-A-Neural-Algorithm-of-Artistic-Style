@@ -2,7 +2,7 @@
 layout: pages
 title:  "Styletransfer Usage Demonstration"
 author_profile: true
-permalink: /Demo
+permalink: /Demo/
 ---
 
 # Styletransfer
