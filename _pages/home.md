@@ -1,44 +1,41 @@
 ---
-layout: home
-author_profile: true
+layout: splash
+permalink: /
+header:
+  overlay_color: "#5e616c"
+  overlay_image: /assets/images/mm-home-page-feature.jpg
+  cta_label: "<i class='fa fa-download'></i> Install Now"
+  cta_url: "/docs/quick-start-guide/"
+  caption:
+excerpt: 'A flexible two-column Jekyll theme. Perfect for personal sites, blogs, and portfolios hosted on GitHub or your own server.<br /> <small><a href="https://github.com/mmistakes/minimal-mistakes/releases/tag/4.8.0">Latest release v4.8.0</a></small><br /><br /> {::nomarkdown}<iframe style="display: inline-block;" src="https://ghbtns.com/github-btn.html?user=mmistakes&repo=minimal-mistakes&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe> <iframe style="display: inline-block;" src="https://ghbtns.com/github-btn.html?user=mmistakes&repo=minimal-mistakes&type=fork&count=true&size=large" frameborder="0" scrolling="0" width="158px" height="30px"></iframe>{:/nomarkdown}'
+feature_row:
+  - image_path: /assets/images/mm-customizable-feature.png
+    alt: "customizable"
+    title: "Super Customizable"
+    excerpt: "Everything from the menus, sidebars, comments, and more can be configured or set with YAML Front Matter."
+    url: "/docs/configuration/"
+    btn_class: "btn--primary"
+    btn_label: "Learn More"
+  - image_path: /assets/images/mm-responsive-feature.png
+    alt: "fully responsive"
+    title: "Responsive Layouts"
+    excerpt: "Built on HTML5 + CSS3. All layouts are fully responsive with helpers to augment your content."
+    url: "/docs/layouts/"
+    btn_class: "btn--primary"
+    btn_label: "Learn More"
+  - image_path: /assets/images/mm-free-feature.png
+    alt: "100% free"
+    title: "100% Free"
+    excerpt: "Free to use however you want under the MIT License. Clone it, fork it, customize it, whatever!"
+    url: "/docs/license/"
+    btn_class: "btn--primary"
+    btn_label: "Learn More"
+github:
+  - excerpt: '{::nomarkdown}<iframe style="display: inline-block;" src="https://ghbtns.com/github-btn.html?user=mmistakes&repo=minimal-mistakes&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe> <iframe style="display: inline-block;" src="https://ghbtns.com/github-btn.html?user=mmistakes&repo=minimal-mistakes&type=fork&count=true&size=large" frameborder="0" scrolling="0" width="158px" height="30px"></iframe>{:/nomarkdown}'
+intro:
+  - excerpt: 'Get notified when I add new stuff &nbsp; [<i class="fa fa-twitter"></i> @mmistakes](https://twitter.com/mmistakes){: .btn .btn--twitter} [<i class="fa fa-paypal"></i> Tip Me](https://www.paypal.me/mmistakes){: .btn .btn--primary}'
 ---
 
-# Styletransfer
-A Tensorflow implementation for A Neural Algorithm of Artistic Style (Gatys et al. 2015)
+{% include feature_row id="intro" type="center" %}
 
-### Folder Structure
-```bash
-./
-.
-├── data
-│   ├── content/ # your content photgraphs
-│   └── style/ # your images of artworks
-├── Demo.ipynb
-├── README.md
-├── report
-├── styletransfer
-│   ├── artist.py
-│   ├── __init__.py
-│   ├── io.py
-│   ├── layers.py
-│   ├── optimizer.py
-│   └── vgg19.py
-```
-
-### Requirements
-* Ubuntu 16.04
-* Tensorflow-gpu 1.3.0 +
-* Scipy 
-* Numpy
-* Pillow
-* Jupyter
-* Matplotlib
-
-To quickly build the same environment as the author's, use the provided environment.yml file
-```bash
-conda env create -f environment.yml
-
-```
-
-### About
-The styletransfer package is a handy implementation of the Neural Style Transfer Algorithm. It is well stuctured and documented. To get an overview of how to use the package, see [Demo.ipynb](./Demo.ipynb)
+{% include feature_row %}
