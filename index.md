@@ -1,3 +1,11 @@
+---
+layout: pages
+title:  "Styletransfer"
+date:   2017-12-18 00:00:00 -0600
+categories: None
+author_profile: true
+---
+
 # Styletransfer
 A Tensorflow implementation for A Neural Algorithm of Artistic Style (Gatys et al. 2015)
 
