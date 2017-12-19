@@ -1,5 +1,5 @@
 ---
-layout: pages
+layout: single
 title:  "Styletransfer Usage Demonstration"
 author_profile: true
 permalink: /Demo/

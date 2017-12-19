@@ -4,3 +4,5 @@ main:
     url: /
   - title: "Demonstration"
     url: /Demo/
+  - title: "Report"
+    url: /report/
