@@ -1,10 +1,8 @@
 ---
 layout: pages
-title:  "Styletransfer"
-date:   2017-12-18 00:00:00 -0600
-categories: None
+title:  "Styletransfer Usage Demonstration"
 author_profile: true
-permalink: /styletransfer/
+permalink: /Demo
 ---
 
 # Styletransfer
