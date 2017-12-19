@@ -1,9 +1,9 @@
 ---
-layout: home
+layout: splash
 permalink: /
 author_profile: true
 header:
-  overlay_filter: 0.5
+  overlay_filter: 0.1
   overlay_image: /assets/images/fu_chun_shan_ju_tu.jpg
   cta_label: "<i class='fa fa-download'></i> Install Now"
   cta_url: "/docs/quick-start-guide/"
