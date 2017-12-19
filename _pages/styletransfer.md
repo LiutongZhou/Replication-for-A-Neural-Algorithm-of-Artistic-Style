@@ -4,6 +4,7 @@ title:  "Styletransfer"
 date:   2017-12-18 00:00:00 -0600
 categories: None
 author_profile: true
+permalink: /styletransfer/
 ---
 
 # Styletransfer

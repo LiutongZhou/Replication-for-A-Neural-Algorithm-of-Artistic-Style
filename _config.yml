@@ -1,6 +1,5 @@
 remote_theme: "mmistakes/minimal-mistakes"
-plugins:
-  - jekyll-remote-theme
+
 
 
 # Welcome to Jekyll!
@@ -56,7 +55,7 @@ reCaptcha:
   secret                 :
 atom_feed:
   path                   : # blank (default) uses feed.xml
-search                   : # true, false (default)
+search                   : true #, false (default)
 
 # SEO Related
 google_site_verification :
@@ -90,18 +89,18 @@ analytics:
 author:
   name             : "Liutong Zhou"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "I am an amazing person."
-  location         : "Somewhere"
+  bio              : "MS stutent at Columbia University Data Science Institute"
+  location         : "New York, NY"
   email            :
   uri              :
-  home             : # null (default), "absolute or relative url to link to author home"
+  home             : "https://liutongzhou.github.io"  # null (default), "absolute or relative url to link to author home"
   bitbucket        :
   codepen          :
   dribbble         :
   flickr           :
   facebook         :
   foursquare       :
-  github           :
+  github           : "liutongzhou"
   gitlab           :
   google_plus      :
   keybase          :
@@ -185,8 +184,8 @@ sass:
 
 # Outputting
 permalink: /:categories/:title/
-paginate: 5 # amount of posts to show
-paginate_path: /page:num/
+#paginate: 5 # amount of posts to show
+#paginate_path: /page:num/
 timezone: America/New_York # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 
@@ -205,6 +204,7 @@ whitelist:
   - jekyll-gist
   - jekyll-feed
   - jemoji
+  - jekyll-remote-theme
 
 
 # Archives
@@ -258,18 +258,25 @@ defaults:
       share: true
       related: true
 
-defaults:
-  # _pages
   - scope:
       path: ""
       type: pages
     values:
       layout: single
+      author_profile: true
 
-defaults:
-  # _foo
   - scope:
       path: ""
       type: foo
     values:
       layout: single
+      author_profile: false
+
+  # _portfolio
+  - scope:
+      path: ""
+      type: portfolio
+    values:
+      layout: single
+      author_profile: false
+      share: true
