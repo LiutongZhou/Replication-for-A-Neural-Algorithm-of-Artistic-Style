@@ -4,7 +4,7 @@ permalink: /
 author_profile: true
 header:
   overlay_filter: 0.5
-  overlay_image: /data/style/fu_chun_shan_ju_tu.jpg
+  overlay_image: /assets/images/fu_chun_shan_ju_tu.jpg
   cta_label: "<i class='fa fa-download'></i> Install Now"
   cta_url: "/docs/quick-start-guide/"
   caption:
