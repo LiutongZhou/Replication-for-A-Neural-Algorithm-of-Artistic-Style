@@ -1,0 +1,39 @@
+<h1 id="styletransfer">Styletransfer</h1>
+<p>A Tensorflow implementation for A Neural Algorithm of Artistic Style (Gatys et al. 2015)</p>
+
+<h3 id="folder-structure">Folder Structure</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./
+<span class="nb">.</span>
+├── data
+│   ├── content/ <span class="c"># your content photgraphs</span>
+│   └── style/ <span class="c"># your images of artworks</span>
+├── Demo.ipynb
+├── README.md
+├── report
+├── styletransfer
+│   ├── artist.py
+│   ├── __init__.py
+│   ├── io.py
+│   ├── layers.py
+│   ├── optimizer.py
+│   └── vgg19.py
+</code></pre></div></div>
+
+<h3 id="requirements">Requirements</h3>
+<ul>
+  <li>Ubuntu 16.04</li>
+  <li>Tensorflow-gpu 1.3.0 +</li>
+  <li>Scipy</li>
+  <li>Numpy</li>
+  <li>Pillow</li>
+  <li>Jupyter</li>
+  <li>Matplotlib</li>
+</ul>
+
+<p>To quickly build the same environment as the author’s, use the provided environment.yml file</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conda env create <span class="nt">-f</span> environment.yml
+
+</code></pre></div></div>
+
+<h3 id="about">About</h3>
+<p>The styletransfer package is a handy implementation of the Neural Style Transfer Algorithm. It is well stuctured and documented. To get an overview of how to use the package, see <a href="./Demo.ipynb">Demo.ipynb</a></p>
