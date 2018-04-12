@@ -37,5 +37,5 @@ conda env create -f environment.yml
 ```
 
 ### What to expect next
-1. The project website is under construction, you can expect to see it come out in Jan. 2018.
+1. The project website is under construction, you can expect to see it come out in May. 2018.
 2. After 1 is done, the package will be optimized, you can expect a revision in Jan. 2018 and the release of version 1.0.
